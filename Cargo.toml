@@ -1,0 +1,20 @@
+[package]
+name = "soap"
+version = "0.1.0"
+edition = "2018"
+
+[[bin]]
+name = "bool"
+path = "bin/bool.rs"
+[[bin]]
+name = "addition"
+path = "bin/addition.rs"
+[[bin]]
+name = "town"
+path = "bin/town.rs"
+
+[dependencies]
+anyhow = "1.0.42"
+pathfinding = "2.2.1"
+serde = "1.0.127"
+serde_json = "1.0.66"
