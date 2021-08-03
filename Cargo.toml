@@ -2,7 +2,7 @@
 name = "soap"
 version = "0.1.0"
 edition = "2018"
-description = "Goal Oriented Action Planner (GOAP) implementation with support for complex data types"
+description = "Goal Oriented Action Planner (GOAP) implementation with support for complex data types and requirements"
 
 [[example]]
 name = "bool"
