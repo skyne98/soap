@@ -1,9 +1,10 @@
 use crate::{
     action::{Action, Consequence},
+    goal::Goal,
     state::State,
 };
 
-#[derive(Clone, Debug, Eq, Hash, PartialEq)]
+#[derive(Clone, Eq, Hash, PartialEq)]
 pub enum Node {
     Consequence(Consequence),
     State(State),
@@ -18,11 +19,26 @@ impl Node {
     }
 }
 
+impl std::fmt::Debug for Node {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Node::Consequence(consequence) => consequence.fmt(f),
+            Node::State(state) => state.fmt(f),
+        }
+    }
+}
+
 pub fn plan<'a>(
     start: &State,
     actions: &[Box<dyn Action + 'a>],
-    goal: &State,
+    goal: &Goal,
 ) -> Option<(Vec<Node>, u64)> {
+    // Prepare the state
+    let mut start = start.clone();
+    for action in actions {
+        start = action.prepare(&start);
+    }
+    // Plan
     let start_node = Node::State(start.clone());
     let result = pathfinding::prelude::astar(
         &start_node,
@@ -30,12 +46,14 @@ pub fn plan<'a>(
         |node| {
             debug!("----- Heuristic -----");
             debug!("To node: {:?}", node);
-            node.state().distance_to(goal)
+            node.state().distance_to_goal(goal)
         },
         |node| {
+            debug!("-------------------");
             debug!("----- Success -----");
-            debug!("To node: {:?}", node);
-            node.state().distance_to(goal) == 0
+            debug!("-------------------");
+            debug!("From node: {:?}", node);
+            node.state().distance_to_goal(goal) == 0
         },
     );
 

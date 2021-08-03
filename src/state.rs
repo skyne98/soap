@@ -2,8 +2,9 @@ use std::hash::{Hash, Hasher};
 use std::{collections::HashMap, fmt::Debug};
 
 use crate::field::Field;
+use crate::goal::Goal;
 
-#[derive(Debug, Clone)]
+#[derive(Clone)]
 pub struct State {
     fields: HashMap<String, Field>,
 }
@@ -85,9 +86,35 @@ impl State {
         distance
     }
 
+    pub fn distance_to_goal(&self, goal: &Goal) -> u64 {
+        debug!("----- Looking for distance to goal -----");
+        debug!("From: {:?}", self);
+        debug!("To: {:?}", goal);
+
+        let mut distance: u64 = 0;
+        for (key, value) in goal.requirements() {
+            let self_value = self.get(key);
+            if let Some(self_value) = self_value {
+                distance += value.distance_from(&self_value);
+            } else {
+                distance += 1;
+            }
+        }
+
+        debug!("= {}", distance);
+
+        distance
+    }
+
     pub fn with_field<S: AsRef<str>>(&self, key: S, value: Field) -> Self {
         let mut clone = self.clone();
         clone.insert(key, value);
         clone
+    }
+}
+
+impl std::fmt::Debug for State {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.fields.fmt(f)
     }
 }

@@ -3,7 +3,9 @@ use serde_json::{Number, Value};
 use soap::{
     action::{Action, Consequence},
     field::Field,
+    goal::Goal,
     planner::plan,
+    requirement::CompareRequirement,
     state::State,
 };
 
@@ -13,6 +15,14 @@ pub struct AddAction {}
 impl Action for AddAction {
     fn key(&self) -> String {
         "addition".to_owned()
+    }
+
+    fn prepare(&self, state: &State) -> State {
+        let mut prepared_state = state.clone();
+        if prepared_state.contains_key("value") == false {
+            prepared_state = prepared_state.with_field("value", Field::from(0u64));
+        }
+        prepared_state
     }
 
     fn options(&self, state: &State) -> Vec<(Consequence, u64)> {
@@ -71,6 +81,14 @@ impl Action for SubAction {
         "subtraction".to_owned()
     }
 
+    fn prepare(&self, state: &State) -> State {
+        let mut prepared_state = state.clone();
+        if prepared_state.contains_key("value") == false {
+            prepared_state = prepared_state.with_field("value", Field::from(0u64));
+        }
+        prepared_state
+    }
+
     fn options(&self, state: &State) -> Vec<(Consequence, u64)> {
         let prev_value = state.get_as_i64("value").unwrap_or(0);
 
@@ -122,7 +140,10 @@ impl Action for SubAction {
 fn main() -> Result<()> {
     pretty_env_logger::init();
     let start = State::new().with_field("value", Field::from(0i64));
-    let goal = start.with_field("value", Field::Value(Value::from(50)));
+    let goal = Goal::new().with_req(
+        "value",
+        Box::new(CompareRequirement::Equals(Field::Value(Value::from(50)))),
+    );
     let actions: Vec<Box<dyn Action>> = vec![Box::new(AddAction {}), Box::new(SubAction {})];
 
     println!("Start: {:#?}", start);

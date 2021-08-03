@@ -25,7 +25,7 @@ impl Distance {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Clone, PartialEq, Eq)]
 pub enum Field {
     Value(Value),
 }
@@ -105,6 +105,13 @@ impl Hash for Field {
         panic!("Hashing this field type is not supported")
     }
 }
+impl std::fmt::Debug for Field {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Field::Value(value) => value.fmt(f),
+        }
+    }
+}
 
 pub fn hash_value<H: Hasher>(value: &Value, state: &mut H) {
     // JSON value
@@ -143,5 +150,5 @@ pub fn hash_value<H: Hasher>(value: &Value, state: &mut H) {
         }
     }
 
-    panic!(format!("Hashing this type ({:?}) is not supported", value))
+    panic!("Hashing this type ({:?}) is not supported", value)
 }

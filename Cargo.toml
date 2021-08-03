@@ -4,15 +4,15 @@ version = "0.1.0"
 edition = "2018"
 description = "Goal Oriented Action Planner (GOAP) implementation with support for complex data types"
 
-[[bin]]
+[[example]]
 name = "bool"
-path = "bin/bool.rs"
-[[bin]]
+path = "example/bool.rs"
+[[example]]
 name = "addition"
-path = "bin/addition.rs"
-[[bin]]
+path = "example/addition.rs"
+[[example]]
 name = "town"
-path = "bin/town.rs"
+path = "example/town.rs"
 
 [dependencies]
 anyhow = "1.0.42"

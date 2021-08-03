@@ -3,7 +3,9 @@ use serde_json::{Number, Value};
 use soap::{
     action::{Action, Consequence},
     field::Field,
+    goal::Goal,
     planner::plan,
+    requirement::CompareRequirement,
     state::State,
 };
 
@@ -13,6 +15,17 @@ pub struct ChopAction {}
 impl Action for ChopAction {
     fn key(&self) -> String {
         "chop".to_owned()
+    }
+
+    fn prepare(&self, state: &State) -> State {
+        let mut prepared_state = state.clone();
+        if prepared_state.contains_key("wood") == false {
+            prepared_state = prepared_state.with_field("wood", Field::from(0u64));
+        }
+        if prepared_state.contains_key("axe") == false {
+            prepared_state = prepared_state.with_field("axe", Field::from(false));
+        }
+        prepared_state
     }
 
     fn options(&self, state: &State) -> Vec<(Consequence, u64)> {
@@ -42,6 +55,14 @@ impl Action for CollectAction {
         "collect".to_owned()
     }
 
+    fn prepare(&self, state: &State) -> State {
+        let mut prepared_state = state.clone();
+        if prepared_state.contains_key("shrooms") == false {
+            prepared_state = prepared_state.with_field("shrooms", Field::from(0u64));
+        }
+        prepared_state
+    }
+
     fn options(&self, state: &State) -> Vec<(Consequence, u64)> {
         let shrooms = state.get_as_u64("shrooms").unwrap_or(0);
 
@@ -62,6 +83,23 @@ pub struct BuyAction {}
 impl Action for BuyAction {
     fn key(&self) -> String {
         "buy".to_owned()
+    }
+
+    fn prepare(&self, state: &State) -> State {
+        let mut prepared_state = state.clone();
+        if prepared_state.contains_key("coins") == false {
+            prepared_state = prepared_state.with_field("coins", Field::from(0u64));
+        }
+        if prepared_state.contains_key("axe") == false {
+            prepared_state = prepared_state.with_field("axe", Field::from(false));
+        }
+        if prepared_state.contains_key("shrooms") == false {
+            prepared_state = prepared_state.with_field("shrooms", Field::from(0u64));
+        }
+        if prepared_state.contains_key("wood") == false {
+            prepared_state = prepared_state.with_field("wood", Field::from(0u64));
+        }
+        prepared_state
     }
 
     fn options(&self, state: &State) -> Vec<(Consequence, u64)> {
@@ -93,6 +131,23 @@ impl Action for SellAction {
         "sell".to_owned()
     }
 
+    fn prepare(&self, state: &State) -> State {
+        let mut prepared_state = state.clone();
+        if prepared_state.contains_key("coins") == false {
+            prepared_state = prepared_state.with_field("coins", Field::from(0u64));
+        }
+        if prepared_state.contains_key("axe") == false {
+            prepared_state = prepared_state.with_field("axe", Field::from(false));
+        }
+        if prepared_state.contains_key("shrooms") == false {
+            prepared_state = prepared_state.with_field("shrooms", Field::from(0u64));
+        }
+        if prepared_state.contains_key("wood") == false {
+            prepared_state = prepared_state.with_field("wood", Field::from(0u64));
+        }
+        prepared_state
+    }
+
     fn options(&self, state: &State) -> Vec<(Consequence, u64)> {
         let coins = state.get_as_u64("coins").unwrap_or(0);
         let wood = state.get_as_u64("wood").unwrap_or(0);
@@ -111,6 +166,16 @@ impl Action for SellAction {
                 },
                 1,
             ));
+            consequences.push((
+                Consequence {
+                    action: self.key(),
+                    argument: Some(Value::from("wood")),
+                    result: state
+                        .with_field("wood", Field::from(0u64))
+                        .with_field("coins", Field::from(coins + wood * 3)),
+                },
+                1,
+            ));
         }
         if shrooms > 1 {
             consequences.push((
@@ -120,6 +185,16 @@ impl Action for SellAction {
                     result: state
                         .with_field("shrooms", Field::from(shrooms - 1))
                         .with_field("coins", Field::from(coins + 1)),
+                },
+                1,
+            ));
+            consequences.push((
+                Consequence {
+                    action: self.key(),
+                    argument: Some(Value::from("shrooms")),
+                    result: state
+                        .with_field("shrooms", Field::from(0u64))
+                        .with_field("coins", Field::from(coins + shrooms)),
                 },
                 1,
             ));
@@ -144,10 +219,19 @@ impl Action for SellAction {
 fn main() -> Result<()> {
     pretty_env_logger::init();
     let start = State::new();
-    let goal = start
-        .with_field("coins", Field::from(10i64))
-        .with_field("wood", Field::from(0i64))
-        .with_field("shrooms", Field::from(0i64));
+    let goal = Goal::new()
+        .with_req(
+            "coins",
+            Box::new(CompareRequirement::MoreThanEquals(Field::from(20i64))),
+        )
+        .with_req(
+            "wood",
+            Box::new(CompareRequirement::Equals(Field::from(0i64))),
+        )
+        .with_req(
+            "shrooms",
+            Box::new(CompareRequirement::Equals(Field::from(0i64))),
+        );
     let actions: Vec<Box<dyn Action>> = vec![
         Box::new(ChopAction {}),
         Box::new(BuyAction {}),

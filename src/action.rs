@@ -33,5 +33,6 @@ impl Hash for Consequence {
 
 pub trait Action {
     fn key(&self) -> String;
+    fn prepare(&self, state: &State) -> State;
     fn options(&self, state: &State) -> Vec<(Consequence, u64)>;
 }

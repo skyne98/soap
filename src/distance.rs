@@ -1,4 +1,3 @@
-use pathfinding::num_traits::ToPrimitive;
 use serde_json::Value;
 
 use crate::field::Field;
