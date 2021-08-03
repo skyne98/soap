@@ -27,8 +27,16 @@ pub fn plan<'a>(
     let result = pathfinding::prelude::astar(
         &start_node,
         |node| consequences(node, actions),
-        |node| start.distance_to(node.state()),
-        |node| node.state().distance_to(goal) == 0,
+        |node| {
+            debug!("----- Heuristic -----");
+            debug!("To node: {:?}", node);
+            node.state().distance_to(goal)
+        },
+        |node| {
+            debug!("----- Success -----");
+            debug!("To node: {:?}", node);
+            node.state().distance_to(goal) == 0
+        },
     );
 
     result

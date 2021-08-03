@@ -1,7 +1,6 @@
 use std::hash::{Hash, Hasher};
 use std::{collections::HashMap, fmt::Debug};
 
-use crate::distance::*;
 use crate::field::Field;
 
 #[derive(Debug, Clone)]
@@ -11,11 +10,13 @@ pub struct State {
 
 impl PartialOrd for State {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        debug!("----- Partial compare -----");
         self.distance_to(other).partial_cmp(&0)
     }
 }
 impl PartialEq for State {
     fn eq(&self, other: &Self) -> bool {
+        debug!("----- Partial equality -----");
         self.distance_to(other) == 0
     }
 }
@@ -49,9 +50,9 @@ impl State {
     }
 
     pub fn distance_to(&self, other: &State) -> u64 {
-        println!("----- Looking for distance -----");
-        println!("From: {:#?}", self);
-        println!("To: {:#?}", other);
+        debug!("----- Looking for distance -----");
+        debug!("From: {:?}", self);
+        debug!("To: {:?}", other);
 
         let mut distance: u64 = 0;
         for (key, value) in &other.fields {
@@ -63,7 +64,7 @@ impl State {
             }
         }
 
-        println!("= {}", distance);
+        debug!("= {}", distance);
 
         distance
     }
