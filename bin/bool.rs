@@ -19,7 +19,7 @@ impl Action for SetTrueAction {
             Consequence {
                 action: self.key(),
                 argument: None,
-                result: state.with_field("done", Field::Value(Value::Bool(true))),
+                result: state.with_field("done", Field::from(true)),
             },
             0,
         )]
@@ -27,8 +27,8 @@ impl Action for SetTrueAction {
 }
 
 fn main() -> Result<()> {
-    let start = State::new().with_field("done", Field::Value(Value::Bool(false)));
-    let goal = start.with_field("done", Field::Value(Value::Bool(true)));
+    let start = State::new().with_field("done", Field::from(false));
+    let goal = start.with_field("done", Field::from(true));
     let actions: Vec<Box<dyn Action>> = vec![Box::new(SetTrueAction {})];
 
     println!("Start: {:#?}", start);

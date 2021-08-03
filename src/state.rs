@@ -45,6 +45,22 @@ impl State {
         self.fields.get(key.as_ref()).map(|value| value.clone())
     }
 
+    pub fn get_as_bool<S: AsRef<str>>(&self, key: S) -> Option<bool> {
+        self.get(key).map(|f| f.as_bool()).flatten()
+    }
+
+    pub fn get_as_u64<S: AsRef<str>>(&self, key: S) -> Option<u64> {
+        self.get(key).map(|f| f.as_u64()).flatten()
+    }
+
+    pub fn get_as_i64<S: AsRef<str>>(&self, key: S) -> Option<i64> {
+        self.get(key).map(|f| f.as_i64()).flatten()
+    }
+
+    pub fn get_as_f64<S: AsRef<str>>(&self, key: S) -> Option<f64> {
+        self.get(key).map(|f| f.as_f64()).flatten()
+    }
+
     pub fn contains_key<S: AsRef<str>>(&self, key: S) -> bool {
         self.fields.contains_key(key.as_ref())
     }

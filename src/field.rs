@@ -1,6 +1,6 @@
 use serde_json::Value;
+use std::fmt::Debug;
 use std::hash::{Hash, Hasher};
-use std::{collections::HashMap, fmt::Debug};
 
 fn integer_decode(val: f64) -> (u64, i16, i8) {
     let bits: u64 = unsafe { std::mem::transmute(val) };
@@ -30,6 +30,71 @@ pub enum Field {
     Value(Value),
 }
 
+impl Field {
+    pub fn as_value(&self) -> Option<Value> {
+        match self {
+            Field::Value(val) => Some(val.clone()),
+            _ => None,
+        }
+    }
+    pub fn as_bool(&self) -> Option<bool> {
+        match self {
+            Field::Value(val) => match val {
+                Value::Bool(val) => Some(val.clone()),
+                _ => None,
+            },
+            _ => None,
+        }
+    }
+    pub fn as_i64(&self) -> Option<i64> {
+        match self {
+            Field::Value(val) => match val {
+                Value::Number(val) => val.as_i64(),
+                _ => None,
+            },
+            _ => None,
+        }
+    }
+    pub fn as_u64(&self) -> Option<u64> {
+        match self {
+            Field::Value(val) => match val {
+                Value::Number(val) => val.as_u64(),
+                _ => None,
+            },
+            _ => None,
+        }
+    }
+    pub fn as_f64(&self) -> Option<f64> {
+        match self {
+            Field::Value(val) => match val {
+                Value::Number(val) => val.as_f64(),
+                _ => None,
+            },
+            _ => None,
+        }
+    }
+}
+
+impl From<bool> for Field {
+    fn from(val: bool) -> Self {
+        Field::Value(Value::from(val))
+    }
+}
+impl From<i64> for Field {
+    fn from(val: i64) -> Self {
+        Field::Value(Value::from(val))
+    }
+}
+impl From<u64> for Field {
+    fn from(val: u64) -> Self {
+        Field::Value(Value::from(val))
+    }
+}
+impl From<f64> for Field {
+    fn from(val: f64) -> Self {
+        Field::Value(Value::from(val))
+    }
+}
 impl Hash for Field {
     fn hash<H: Hasher>(&self, state: &mut H) {
         if let Field::Value(this) = self {
@@ -45,6 +110,12 @@ pub fn hash_value<H: Hasher>(value: &Value, state: &mut H) {
     // JSON value
     // Bool
     if let Value::Bool(this) = value {
+        this.hash(state);
+        return;
+    }
+
+    // String
+    if let Value::String(this) = value {
         this.hash(state);
         return;
     }
@@ -72,5 +143,5 @@ pub fn hash_value<H: Hasher>(value: &Value, state: &mut H) {
         }
     }
 
-    panic!("Hashing this type is not supported")
+    panic!(format!("Hashing this type ({:?}) is not supported", value))
 }
