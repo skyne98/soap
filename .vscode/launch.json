@@ -1,0 +1,138 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in library 'soap'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--lib",
+                    "--package=soap"
+                ],
+                "filter": {
+                    "name": "soap",
+                    "kind": "lib"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'bool'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=bool",
+                    "--package=soap"
+                ],
+                "filter": {
+                    "name": "bool",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'bool'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=bool",
+                    "--package=soap"
+                ],
+                "filter": {
+                    "name": "bool",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'addition'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=addition",
+                    "--package=soap"
+                ],
+                "filter": {
+                    "name": "addition",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'addition'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=addition",
+                    "--package=soap"
+                ],
+                "filter": {
+                    "name": "addition",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug example 'town'",
+            "cargo": {
+                "args": [
+                    "build",
+                    "--example=town",
+                    "--package=soap"
+                ],
+                "filter": {
+                    "name": "town",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug unit tests in example 'town'",
+            "cargo": {
+                "args": [
+                    "test",
+                    "--no-run",
+                    "--example=town",
+                    "--package=soap"
+                ],
+                "filter": {
+                    "name": "town",
+                    "kind": "example"
+                }
+            },
+            "args": [],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}

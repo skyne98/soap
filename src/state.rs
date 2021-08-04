@@ -1,5 +1,5 @@
+use std::collections::HashMap;
 use std::hash::{Hash, Hasher};
-use std::{collections::HashMap, fmt::Debug};
 
 use crate::field::Field;
 use crate::goal::Goal;

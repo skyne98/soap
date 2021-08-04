@@ -1,5 +1,4 @@
 use serde_json::Value;
-use std::fmt::Debug;
 use std::hash::{Hash, Hasher};
 
 fn integer_decode(val: f64) -> (u64, i16, i8) {
@@ -25,9 +24,14 @@ impl Distance {
     }
 }
 
-#[derive(Clone, PartialEq, Eq)]
+#[derive(Clone)]
 pub enum Field {
     Value(Value),
+    Bool(bool),
+    String(String),
+    U64(u64),
+    I64(i64),
+    F64(f64),
 }
 
 impl Field {
@@ -43,6 +47,7 @@ impl Field {
                 Value::Bool(val) => Some(val.clone()),
                 _ => None,
             },
+            Field::Bool(val) => Some(*val),
             _ => None,
         }
     }
@@ -52,6 +57,7 @@ impl Field {
                 Value::Number(val) => val.as_i64(),
                 _ => None,
             },
+            Field::I64(val) => Some(*val),
             _ => None,
         }
     }
@@ -61,6 +67,7 @@ impl Field {
                 Value::Number(val) => val.as_u64(),
                 _ => None,
             },
+            Field::U64(val) => Some(*val),
             _ => None,
         }
     }
@@ -70,6 +77,7 @@ impl Field {
                 Value::Number(val) => val.as_f64(),
                 _ => None,
             },
+            Field::F64(val) => Some(*val),
             _ => None,
         }
     }
@@ -77,41 +85,81 @@ impl Field {
 
 impl From<bool> for Field {
     fn from(val: bool) -> Self {
-        Field::Value(Value::from(val))
+        Field::Bool(val)
     }
 }
 impl From<i64> for Field {
     fn from(val: i64) -> Self {
-        Field::Value(Value::from(val))
+        Field::I64(val)
     }
 }
 impl From<u64> for Field {
     fn from(val: u64) -> Self {
-        Field::Value(Value::from(val))
+        Field::U64(val)
     }
 }
 impl From<f64> for Field {
     fn from(val: f64) -> Self {
-        Field::Value(Value::from(val))
+        Field::F64(val)
     }
 }
 impl Hash for Field {
     fn hash<H: Hasher>(&self, state: &mut H) {
-        if let Field::Value(this) = self {
-            hash_value(this, state);
-            return;
+        match self {
+            Field::Value(val) => hash_value(val, state),
+            Field::Bool(val) => val.hash(state),
+            Field::String(val) => val.hash(state),
+            Field::U64(val) => val.hash(state),
+            Field::I64(val) => val.hash(state),
+            Field::F64(val) => Distance::new(*val).hash(state),
+            _ => panic!("Hashing this field type is not supported"),
         }
-
-        panic!("Hashing this field type is not supported")
     }
 }
 impl std::fmt::Debug for Field {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             Field::Value(value) => value.fmt(f),
+            Field::Bool(value) => value.fmt(f),
+            Field::String(value) => value.fmt(f),
+            Field::U64(value) => value.fmt(f),
+            Field::I64(value) => value.fmt(f),
+            Field::F64(value) => value.fmt(f),
         }
     }
 }
+impl PartialEq for Field {
+    fn eq(&self, other: &Self) -> bool {
+        match self {
+            Field::Value(val) => match other {
+                Field::Value(other) => val.eq(other),
+                _ => false,
+            },
+            Field::Bool(val) => match other {
+                Field::Bool(other) => val.eq(other),
+                _ => false,
+            },
+            Field::String(val) => match other {
+                Field::String(other) => val.eq(other),
+                _ => false,
+            },
+            Field::U64(val) => match other {
+                Field::U64(other) => val.eq(other),
+                _ => false,
+            },
+            Field::I64(val) => match other {
+                Field::I64(other) => val.eq(other),
+                _ => false,
+            },
+            Field::F64(val) => match other {
+                Field::F64(other) => val.eq(other),
+                _ => false,
+            },
+            _ => panic!("Checking equality of this type of field is not yet supported"),
+        }
+    }
+}
+impl Eq for Field {}
 
 pub fn hash_value<H: Hasher>(value: &Value, state: &mut H) {
     // JSON value

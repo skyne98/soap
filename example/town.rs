@@ -33,14 +33,24 @@ impl Action for ChopAction {
         let axe = state.get_as_bool("axe").unwrap_or(false);
 
         if axe {
-            vec![(
-                Consequence {
-                    action: self.key(),
-                    argument: None,
-                    result: state.with_field("wood", Field::from(wood + 2)),
-                },
-                1,
-            )]
+            vec![
+                (
+                    Consequence {
+                        action: self.key(),
+                        argument: None,
+                        result: state.with_field("wood", Field::from(wood + 2)),
+                    },
+                    1,
+                ),
+                (
+                    Consequence {
+                        action: self.key(),
+                        argument: None,
+                        result: state.with_field("wood", Field::from(wood + 8)),
+                    },
+                    4,
+                ),
+            ]
         } else {
             vec![]
         }
@@ -222,15 +232,15 @@ fn main() -> Result<()> {
     let goal = Goal::new()
         .with_req(
             "coins",
-            Box::new(CompareRequirement::MoreThanEquals(Field::from(20i64))),
+            Box::new(CompareRequirement::MoreThanEquals(Field::from(50u64))),
         )
         .with_req(
             "wood",
-            Box::new(CompareRequirement::Equals(Field::from(0i64))),
+            Box::new(CompareRequirement::Equals(Field::from(10u64))),
         )
         .with_req(
             "shrooms",
-            Box::new(CompareRequirement::Equals(Field::from(0i64))),
+            Box::new(CompareRequirement::Equals(Field::from(2u64))),
         );
     let actions: Vec<Box<dyn Action>> = vec![
         Box::new(ChopAction {}),
@@ -246,7 +256,11 @@ fn main() -> Result<()> {
     let plan = plan(&start, &actions[..], &goal);
     let done_in = std::time::Instant::now().duration_since(start_time);
     println!("Plan: {:#?}", plan);
-    println!("Done in {} ms", done_in.as_millis());
+    println!(
+        "Done in {} ms ({} μs)",
+        done_in.as_millis(),
+        done_in.as_micros()
+    );
 
     Ok(())
 }

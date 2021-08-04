@@ -153,7 +153,11 @@ fn main() -> Result<()> {
     let plan = plan(&start, &actions[..], &goal);
     let done_in = std::time::Instant::now().duration_since(start_time);
     println!("Plan: {:#?}", plan);
-    println!("Done in {} ms", done_in.as_millis());
+    println!(
+        "Done in {} ms ({} μs)",
+        done_in.as_millis(),
+        done_in.as_micros()
+    );
 
     Ok(())
 }

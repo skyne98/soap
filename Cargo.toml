@@ -13,6 +13,9 @@ path = "example/addition.rs"
 [[example]]
 name = "town"
 path = "example/town.rs"
+[[example]]
+name = "navigation"
+path = "example/navigation.rs"
 
 [dependencies]
 anyhow = "1.0.42"
@@ -21,3 +24,6 @@ serde = "1.0.127"
 serde_json = "1.0.66"
 log = "0.4.14"
 pretty_env_logger = "0.4.0"
+
+[dev-dependencies]
+nannou = "0.17.1"
