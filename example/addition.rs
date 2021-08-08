@@ -142,7 +142,7 @@ fn main() -> Result<()> {
     let start = State::new().with_field("value", Field::from(0i64));
     let goal = Goal::new().with_req(
         "value",
-        Box::new(CompareRequirement::Equals(Field::Value(Value::from(50)))),
+        Box::new(CompareRequirement::Equals(Field::from(50))),
     );
     let actions: Vec<Box<dyn Action>> = vec![Box::new(AddAction {}), Box::new(SubAction {})];
 

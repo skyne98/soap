@@ -232,7 +232,7 @@ fn main() -> Result<()> {
     let goal = Goal::new()
         .with_req(
             "coins",
-            Box::new(CompareRequirement::MoreThanEquals(Field::from(50u64))),
+            Box::new(CompareRequirement::MoreThanEquals(Field::from(10u64))),
         )
         .with_req(
             "wood",

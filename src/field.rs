@@ -88,14 +88,29 @@ impl From<bool> for Field {
         Field::Bool(val)
     }
 }
+impl From<i32> for Field {
+    fn from(val: i32) -> Self {
+        Field::I64(val as i64)
+    }
+}
 impl From<i64> for Field {
     fn from(val: i64) -> Self {
         Field::I64(val)
     }
 }
+impl From<u32> for Field {
+    fn from(val: u32) -> Self {
+        Field::U64(val as u64)
+    }
+}
 impl From<u64> for Field {
     fn from(val: u64) -> Self {
         Field::U64(val)
+    }
+}
+impl From<f32> for Field {
+    fn from(val: f32) -> Self {
+        Field::F64(val as f64)
     }
 }
 impl From<f64> for Field {
